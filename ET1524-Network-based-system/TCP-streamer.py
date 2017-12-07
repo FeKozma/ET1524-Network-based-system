@@ -1,5 +1,8 @@
+# TCP Server
+# Anders Nelsson BTH
+# Exempel från kursbok
+
 from socket import *
-import time
 
 # get nr of udp utskick per sec
 sentence = 'help';
@@ -19,13 +22,17 @@ while sentence == 'help':
             sentence = 'help'
 
 
-
-host = '192.168.43.17'
-port = 12000
 serverPort = 12001
 
-s = socket(AF_INET, SOCK_DGRAM)
-s.bind(('', serverPort))
+
+# create TCP welcoming socket
+serverSocket = socket(AF_INET, SOCK_STREAM)
+serverSocket.bind(('',serverPort))
+
+# server starts listening for incoming TCP requests
+serverSocket.listen(1)
+
+print ('The TCP server is ready to receive')
 
 
 messageMaxLen = 100;
@@ -34,10 +41,20 @@ for m in range(0, messageMaxLen):
 	message += '0'
 
 sequence = 10001
-print("sending to host " + host + ":" + str(port))
-while True:
-	s.sendto((str(sequence) + ';' + message).encode(), (host, port))
-	sequence += 1
 
-	time.sleep(1/nrPerSec)
+
+# server waits for incoming requests; new socket created on return
+connectionSocket, addr = serverSocket.accept()
+
+
+
+while True:
+
+    connectionSocket.send((str(sequence) + ';' + message).encode())
+    sequence += 1
+    time.sleep(1/nrPerSec)
+
+    
+# close the TCP connection; the welcoming socket continues
+connectionSocket.close()
 

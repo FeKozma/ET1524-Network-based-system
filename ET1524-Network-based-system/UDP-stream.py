@@ -34,9 +34,10 @@ for m in range(0, messageMaxLen):
 
 sequence = 10001
 
+print("sending to " + host + ":" + str(port))
 while True:
 	s.sendto((str(sequence) + ';' + message).encode(), (host, port))
 	sequence += 1
 
-	time.sleep(1)
+	time.sleep(1/nrPerSec)
 
